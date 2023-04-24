@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  FlatList,
+  View
 } from 'react-native';
 
-import Picker from '@react-native-picker/picker';
+// import { fetchGyms } from '../actions/fetchGyms.js';
+import {useSelector, useDispatch} from 'react-redux';
 
 const RegistrationScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -17,12 +19,18 @@ const RegistrationScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [gymId, setGym] = useState('');
-  const [gyms, setGyms] = useState([]);
+//   const [gymId, setGym] = useState('');
+//   const [searchValue, setSearchValue] = useState('');
+//   const [filteredGyms, setFilteredGyms] = useState([]);;
+
+  const gyms = useSelector((state) => state.gyms);
+
+
+  const dispatch = useDispatch();
 
 //   useEffect(() => {
-//     fetchGyms();
-//   }, []);
+//     dispatch(fetchGyms());
+//   }, [dispatch]);
 
 //   const fetchGyms = async () => {
 //     try {
@@ -34,6 +42,23 @@ const RegistrationScreen = () => {
 //     }
 //   };
 
+// const handleInputGymChange = (event) => {
+//     const searchValue = event.target.value;
+    
+//     if (searchValue.length < 3) {
+//         setFilteredGyms([]);
+//         return;
+//     }
+
+//     const filteredGyms = gyms.filter((gym) =>
+//       gym.name.toLowerCase().includes(searchValue.toLowerCase())
+//     );
+  
+//     setSearchValue(searchValue);
+//     setFilteredGyms(filteredGyms);
+//   };
+  
+
   const handleRegister = async () => {
     // Handle registration logic here
     const athlete = {
@@ -42,15 +67,12 @@ const RegistrationScreen = () => {
     email,
     username,
     password,
-    gymId,
     birthDate
     };
-
-    athlete.gymId = parseInt(athlete.gymId, 10);
     console.log('Athlete:', JSON.stringify(athlete));
 
   try {
-    const response = fetch('http://localhost:8000/athlete', {
+    const response = await fetch('http://localhost:8000/api/v1/athlete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -61,12 +83,12 @@ const RegistrationScreen = () => {
     const data = response.json();
     console.log('Athlete created:', data);
   } catch (error) {
-    console.error('Error creating athlete:', error);
+    console.log('Error creating athlete:', error);
   }
 };
-  
 
   return (
+
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Registration</Text>
 
@@ -115,27 +137,19 @@ const RegistrationScreen = () => {
         onChangeText={(text) => setBirthDate(text)}
         value={birthDate}
       />
-
-      {/* <Picker
-        selectedValue={gym}
-        style={styles.picker}
-        onValueChange={(itemValue) => setGym(itemValue)}
-      >
-        <Picker.Item label="Select Gym" value="" />
-        {gyms.map((gym) => (
-          <Picker.Item key={gym.id} label={gym.name} value={gym.id} />
-        ))}
-      </Picker> */}
-      <TextInput
-        style={styles.input}
-        placeholder="Gym ID (number only)"
-        onChangeText={(text) => {
-            const parsedGymId = parseInt(text, 10);
-            setGym(isNaN(parsedGymId) ? null : parsedGymId);
-        }}
-        value={gymId ? gymId.toString() : ''}
-        keyboardType="numeric"
+      {/* <View>
+        <TextInput
+            style={styles.input}
+            placeholder="Gym ID (number only)"
+            onChangeText={handleInputGymChange}
+            value={searchValue}
         />
+        <FlatList
+            data={filteredGyms}
+            renderItem={({ item }) => <Text>{item.name}</Text>}
+            keyExtractor={(item) => item.id.toString()}
+        />
+      </View> */}
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
@@ -182,5 +196,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     },
 });
-    
+
 export default RegistrationScreen;
