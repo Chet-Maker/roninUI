@@ -9,7 +9,6 @@ import {
   View
 } from 'react-native';
 
-// import { fetchGyms } from '../actions/fetchGyms.js';
 import {useSelector, useDispatch} from 'react-redux';
 
 const RegistrationScreen = (props) => {
@@ -19,48 +18,13 @@ const RegistrationScreen = (props) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [birthDate, setBirthDate] = useState('');
-//   const [gymId, setGym] = useState('');
-//   const [searchValue, setSearchValue] = useState('');
-//   const [filteredGyms, setFilteredGyms] = useState([]);;
 
   const gyms = useSelector((state) => state.gyms);
 
 
   const dispatch = useDispatch();
 
-//   useEffect(() => {
-//     dispatch(fetchGyms());
-//   }, [dispatch]);
-
-//   const fetchGyms = async () => {
-//     try {
-//       const response = await fetch('http://localhost:8000/gyms');
-//       const gymsData = await response.json();
-//       setGyms(gymsData);
-//     } catch (error) {
-//       console.error('Error fetching gyms:', error);
-//     }
-//   };
-
-// const handleInputGymChange = (event) => {
-//     const searchValue = event.target.value;
-    
-//     if (searchValue.length < 3) {
-//         setFilteredGyms([]);
-//         return;
-//     }
-
-//     const filteredGyms = gyms.filter((gym) =>
-//       gym.name.toLowerCase().includes(searchValue.toLowerCase())
-//     );
-  
-//     setSearchValue(searchValue);
-//     setFilteredGyms(filteredGyms);
-//   };
-  
-
   const handleRegister = async ({navigation}) => {
-    // Handle registration logic here
     const athlete = {
     firstName,
     lastName,
@@ -81,7 +45,7 @@ const RegistrationScreen = (props) => {
     });
   
     const data = response.json();
-    props.navigation.navigate('Home')
+    props.navigation.navigate('Welcome')
   } catch (error) {
     console.log('Error creating athlete:', error);
   }
@@ -137,19 +101,6 @@ const RegistrationScreen = (props) => {
         onChangeText={(text) => setBirthDate(text)}
         value={birthDate}
       />
-      {/* <View>
-        <TextInput
-            style={styles.input}
-            placeholder="Gym ID (number only)"
-            onChangeText={handleInputGymChange}
-            value={searchValue}
-        />
-        <FlatList
-            data={filteredGyms}
-            renderItem={({ item }) => <Text>{item.name}</Text>}
-            keyExtractor={(item) => item.id.toString()}
-        />
-      </View> */}
 
       <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
