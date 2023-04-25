@@ -1,16 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-export default function HomeScreen() {
+export default function FeedScreen() {
   return (
     <View style={styles.container}>
-    <Image source={roninIcon} style={styles.icon} />
-        <Text style={styles.title}>Ronin</Text>
+        <Text style={styles.title}>Feed Screen</Text>
     </View>
   );
 }
-
-const roninIcon = require('../assets/ronin.png');
 
 const styles = StyleSheet.create({
   container: {
