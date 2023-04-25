@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from './src/reducers';
-import RegistrationScreen from './src/screens/RegistrationScreen';
+import AppNavigator from './src/AppNavigator';
+import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   const store = configureStore({
@@ -11,7 +12,9 @@ export default function App() {
   });
   return (
     <Provider store={store}>
-      <RegistrationScreen />
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
     </Provider>
   );
 }

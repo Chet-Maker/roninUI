@@ -12,7 +12,7 @@ import {
 // import { fetchGyms } from '../actions/fetchGyms.js';
 import {useSelector, useDispatch} from 'react-redux';
 
-const RegistrationScreen = () => {
+const RegistrationScreen = (props) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -59,7 +59,7 @@ const RegistrationScreen = () => {
 //   };
   
 
-  const handleRegister = async () => {
+  const handleRegister = async ({navigation}) => {
     // Handle registration logic here
     const athlete = {
     firstName,
@@ -81,7 +81,7 @@ const RegistrationScreen = () => {
     });
   
     const data = response.json();
-    console.log('Athlete created:', data);
+    props.navigation.navigate('Home')
   } catch (error) {
     console.log('Error creating athlete:', error);
   }
