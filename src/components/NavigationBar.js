@@ -13,19 +13,19 @@ function NavigationBar() {
       initialRouteName="Challenge"
       screenOptions={{
         activeTintColor: 'white',
+        inactiveTintColor: 'white',
         labelStyle: {
           fontSize: 14,
-          backgroundColor: 'white',
         },
-        style: {
+        tabBarStyle: {
           backgroundColor: 'black',
         },
       }}
     >
-      <Tab.Screen name="Challenge" component={ChallengeScreen} />
-      <Tab.Screen name="My Profile" component={MyProfileScreen} />
-      <Tab.Screen name="Feed" component={FeedScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Challenge" component={ChallengeScreen} options={{headerShown: false}}/>
+      <Tab.Screen name="My Profile" component={MyProfileScreen} options={{headerShown: false}}/>
+      <Tab.Screen name="Feed" component={FeedScreen} options={{headerShown: false}}/>
+      <Tab.Screen name="Search" component={SearchScreen} options={{headerShown: false}}/>
     </Tab.Navigator>
   );
 }

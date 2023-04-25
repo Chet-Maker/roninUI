@@ -14,7 +14,11 @@ function AppNavigator() {
         {(props) => <RegistrationScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
-      <Stack.Screen name="Home" component={NavigationBar} />
+      <Stack.Screen 
+      name="Home" 
+      component={NavigationBar}
+      options={{ headerShown: false, title: 'Home', headerLeft: () => null }}
+      />
     </Stack.Navigator>
   );
 }
