@@ -10,7 +10,7 @@ const HomeScreen = (props) => {
 
     const handleContinue = ({navigation}) => {
         //Todo: Send user's agreement to server and store in database
-        console.log('User agreed to terms of service')
+        //Todo: Check if user has already agreed to terms of service
         props.navigation.navigate('Home');
     };
 
