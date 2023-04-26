@@ -8,6 +8,7 @@ import {
   Alert,
   View
 } from 'react-native';
+import { setAthleteId } from '../reducers/athleteSlice';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -20,7 +21,6 @@ const RegistrationScreen = (props) => {
   const [birthDate, setBirthDate] = useState('');
 
   const gyms = useSelector((state) => state.gyms);
-
   const dispatch = useDispatch();
 
   const isValidEmail = (email) => {
@@ -96,7 +96,9 @@ const RegistrationScreen = (props) => {
         body: JSON.stringify(athlete),
       });
 
-      const data = response.json();
+      const data = await response.json();
+      console.log(data)
+      dispatch(setAthleteId(data));
       props.navigation.navigate('Welcome');
     } catch (error) {
       console.log('Error creating athlete:', error);

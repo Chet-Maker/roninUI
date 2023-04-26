@@ -23,9 +23,9 @@ function NavigationBar() {
       }}
     >
       <Tab.Screen name="Challenge" component={ChallengeScreen} options={{headerShown: false}}/>
-      <Tab.Screen name="My Profile" component={MyProfileScreen} options={{headerShown: false}}/>
       <Tab.Screen name="Feed" component={FeedScreen} options={{headerShown: false}}/>
       <Tab.Screen name="Search" component={SearchScreen} options={{headerShown: false}}/>
+      <Tab.Screen name="My Profile" component={MyProfileScreen} options={{headerShown: false}}/>
     </Tab.Navigator>
   );
 }
