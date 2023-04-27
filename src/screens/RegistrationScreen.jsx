@@ -97,9 +97,8 @@ const RegistrationScreen = (props) => {
       });
 
       const data = await response.json();
-      console.log(data)
       dispatch(setAthleteId(data));
-      props.navigation.navigate('Welcome');
+      props.navigation.navigate('StyleSelector');
     } catch (error) {
       console.log('Error creating athlete:', error);
     }

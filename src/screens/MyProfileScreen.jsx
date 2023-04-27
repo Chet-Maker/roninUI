@@ -29,7 +29,6 @@ const MyProfileScreen = () => {
           } else {
               setScoreData(scoreJson);
           }
-          console.log("yo: " + athleteId + " " + scoreJson[0].styleName)
           setProfileData(profileJson[0]);
           setRecordData(recordJson);
         } catch (error) {
@@ -106,74 +105,74 @@ const MyProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-},
-profileImage: {
-width: '35%',
-height: undefined,
-aspectRatio: 1,
-borderRadius: 100,
-marginBottom: 20,
-marginTop: 20,
-alignSelf: 'center',
-},
-winLossContainer: {
-flexDirection: 'row',
-justifyContent: 'space-around',
-marginBottom: 20,
-},
-winLossItem: {
-alignItems: 'center',
-fontSize: 20,
-},
-winLossTitle: {
-marginBottom: 10,
-fontWeight: 'bold',
-fontSize: 20,
-},
-winLoss: {
-fontSize: 18,
-},
-userName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 50,
-    marginTop: 5,
-    alignSelf: 'center',
-    textAlign: 'center',
-  },
-ratingTitle: {
-    fontSize: 23,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    marginTop: 15,
-    alignSelf: 'center',
-    textAlign: 'center',
-  },
-  ratingContainer: {
-    width: '100%',
-    flexDirection: 'column',
-    marginBottom: 20,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingHorizontal: '5%',
-    marginBottom: 10,
-  },
-  styleName: {
-    width: 'auto',
-    fontStyle: 'italic',
-  },
-  score: {
-    width: 'auto',
-  },
-userInfoContainer: {
-marginTop: 10,
-alignSelf: 'center',
-},
+    container: {
+        flex: 1,
+        padding: 20,
+    },
+    profileImage: {
+        width: '35%',
+        height: undefined,
+        aspectRatio: 1,
+        borderRadius: 100,
+        marginBottom: 20,
+        marginTop: 20,
+        alignSelf: 'center',
+    },
+    winLossContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 20,
+    },
+    winLossItem: {
+        alignItems: 'center',
+        fontSize: 20,
+    },
+    winLossTitle: {
+        marginBottom: 10,
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
+    winLoss: {
+        fontSize: 18,
+    },
+    userName: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 50,
+        marginTop: 5,
+        alignSelf: 'center',
+        textAlign: 'center',
+    },
+    ratingTitle: {
+        fontSize: 23,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        marginTop: 15,
+        alignSelf: 'center',
+        textAlign: 'center',
+    },
+    ratingContainer: {
+        width: '100%',
+        flexDirection: 'column',
+        marginBottom: 20,
+    },
+    ratingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: '5%',
+        marginBottom: 10,
+    },
+    styleName: {
+        width: 'auto',
+        fontStyle: 'italic',
+    },
+    score: {
+        width: 'auto',
+    },
+    userInfoContainer: {
+        marginTop: 10,
+        alignSelf: 'center',
+    },
 });
 
 export default MyProfileScreen;
