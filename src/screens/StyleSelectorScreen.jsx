@@ -33,12 +33,13 @@ const StyleSelectorScreen = (props) => {
   const toggleStyle = (styleId) => {
     if (selectedStyles.includes(styleId)) {
       setSelectedStyles(selectedStyles.filter((id) => id !== styleId));
+      console.log("styles ", selectedStyles)
     } else {
+      console.log("styles ", selectedStyles)
       setSelectedStyles([...selectedStyles, styleId]);
     }
   };
 
-  console.log('Selected styles:', selectedStyles)
   const handleSubmit = async () => {
     try {
       const response = await fetch(`http://localhost:8000/api/v1/styles/athlete/${athleteId}`, {
@@ -46,7 +47,7 @@ const StyleSelectorScreen = (props) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ athleteId, styleIds: selectedStyles }),
+        body: JSON.stringify({ athleteId, styles: selectedStyles }),
       });
 
       if (response.ok) {
@@ -101,12 +102,15 @@ const layout = StyleSheet.create({
     textAlign: 'center',
   },
   styleButton: {
+    alignSelf: 'center',
+    width: '80%',
+    height: '8%',
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 5,
     padding: 10,
     marginBottom: 15,
-    backgroundColor: '#fff',
+    marginTop: 15,
   },
   styleButtonSelected: {
     backgroundColor: '#000',
@@ -114,19 +118,31 @@ const layout = StyleSheet.create({
   styleButtonText: {
     color: '#000',
     textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingTop: 5,
   },
   styleButtonTextSelected: {
     color: '#fff',
   },
   submitButton: {
-    backgroundColor: '#1e90ff',
+    backgroundColor: '#fff',
+    borderColor: '#000',
     borderRadius: 5,
+    borderWidth: 2,
     padding: 10,
     marginBottom: 15,
+    marginTop: 50,
+    alignSelf: 'center',
+    width: '80%',
+    height: '8%',
   },
   submitButtonText: {
-    color: '#fff',
+    color: '#000',
     textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingTop: 5,
   },
 });
 

@@ -11,6 +11,7 @@ const MyProfileScreen = () => {
   const [scoreData, setScoreData] = useState(null);
 
   const athleteId = useSelector((state) => state.athlete.athleteId);
+  console.log(athleteId)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,7 +24,7 @@ const MyProfileScreen = () => {
           const profileJson = await profileResponse.json();
           const recordJson = await recordResponse.json();
           const scoreJson = await scoreResponse.json();
-
+            console.log(scoreJson);
           if (scoreJson == null) {
               setScoreData([]);
           } else {
@@ -92,12 +93,28 @@ const MyProfileScreen = () => {
         </View>
 
         {/* User information */}
+        <Text style={styles.userInfoTitle}>Account Info</Text>
         <View style={styles.userInfoContainer}>
-          <Text>Name: {firstName} {lastName}</Text>
-          <Text>Username: {username}</Text>
-          <Text>Email: {email}</Text>
-          <Text>Password: ******</Text>
-          <Text>Birthdate: {new Date(birthDate).toLocaleDateString()}</Text>
+            <View style={styles.userInfoRow}>
+                <Text style={styles.userInfoLabel}>Name </Text>
+                <Text style={styles.userInfoItem}>{firstName} {lastName}</Text>
+          </View>
+          <View style={styles.userInfoRow}>
+                <Text style={styles.userInfoLabel}>Username </Text>
+                <Text style={styles.userInfoItem}>{username}</Text>
+          </View>
+          <View style={styles.userInfoRow}>
+                <Text style={styles.userInfoLabel}>Email </Text>
+                <Text style={styles.userInfoItem}>{email}</Text>
+          </View>
+          <View style={styles.userInfoRow}>
+                <Text style={styles.userInfoLabel}>Password </Text>
+                <Text style={styles.userInfoItem}>********</Text>
+          </View>
+          <View style={styles.userInfoRow}>
+                <Text style={styles.userInfoLabel}>Birthday </Text>
+                <Text style={styles.userInfoItem}>{new Date(birthDate).toLocaleDateString()}</Text>
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -144,7 +161,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     ratingTitle: {
-        fontSize: 23,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 20,
         marginTop: 15,
@@ -155,23 +172,50 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'column',
         marginBottom: 20,
-    },
-    ratingRow: {
+      },
+      ratingRow: {
         flexDirection: 'row',
         justifyContent: 'space-around',
         paddingHorizontal: '5%',
         marginBottom: 10,
-    },
-    styleName: {
-        width: 'auto',
+      },
+      styleName: {
+        flex: 1,
         fontStyle: 'italic',
-    },
-    score: {
-        width: 'auto',
+        textAlign: 'center', 
+      },
+      score: {
+        flex: 1,
+        textAlign: 'center',
+      },
+      userInfoTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        marginTop: 55,
+        alignSelf: 'center',
+        textAlign: 'center',
     },
     userInfoContainer: {
-        marginTop: 10,
-        alignSelf: 'center',
+        width: '100%',
+        flexDirection: 'column',
+        marginBottom: 20,
+      },
+      userInfoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: '5%',
+        marginBottom: 10,
+      },
+    userInfoLabel: {
+        marginBottom: 10,
+        fontWeight: 'bold',
+        fontSize: 11,
+    },
+    userInfoItem: {
+        marginBottom: 10,
+        fontWeight: 'bold',
+        fontSize: 11,
     },
 });
 
