@@ -42,6 +42,9 @@ const RegistrationScreen = (props) => {
         },
       });
       const data = await response.json();
+      if (data == null) {
+        return true;
+        }
       for (let i = 0; i < data.length; i++) {
         if (data[i] === username) {
           return false; // The username is already taken

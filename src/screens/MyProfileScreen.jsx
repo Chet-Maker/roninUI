@@ -57,7 +57,7 @@ const MyProfileScreen = () => {
     password,
   } = profileData;
 
-  const { wins, losses } = recordData;
+  const { wins, losses, draws } = recordData;
 
   return (
     <ScrollView>
@@ -74,6 +74,10 @@ const MyProfileScreen = () => {
           <View style={styles.winLossItem}>
             <Text style={styles.winLossTitle}>Wins</Text>
             <Text style={styles.winLoss}>{wins}</Text>
+          </View>
+          <View style={styles.winLossItem}>
+            <Text style={styles.winLossTitle}>Draws</Text>
+            <Text style={styles.winLoss}>{draws}</Text>
           </View>
           <View style={styles.winLossItem}>
             <Text style={styles.winLossTitle}>Losses</Text>

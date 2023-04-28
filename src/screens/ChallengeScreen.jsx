@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -23,6 +23,14 @@ const ChallengeScreen = () => {
   const [styles, setStyles] = useState([]);
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [pendingBout, setPendingBout] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [dropdownPositionReferee, setDropdownPositionReferee] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  const searchOpponentRef = React.useRef(null);
+  const searchRefereeRef = React.useRef(null);
 
   const challenger_id = useSelector((state) => state.athlete.athleteId);
 
@@ -31,9 +39,16 @@ const ChallengeScreen = () => {
       const response = await axios.get("http://localhost:8000/api/v1/athletes");
       setAthletes(response.data);
     };
-
     fetchAthletes();
   }, []);
+
+  useEffect(() => {
+    updateDropdownPosition();
+  }, [searchOpponent]);
+
+  useEffect(() => {
+    updateDropdownPositionReferee();
+  }, [searchReferee]);
 
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
@@ -54,9 +69,19 @@ const ChallengeScreen = () => {
     setSearchReferee("");
   };
 
+  const updateDropdownPosition = () => {
+    searchOpponentRef.current.measure((fx, fy, width, height, px, py) => {
+      setDropdownPosition({ top: py + height, left: px });
+    });
+  };
+
+  const updateDropdownPositionReferee = () => {
+    searchRefereeRef.current.measure((fx, fy, width, height, px, py) => {
+      setDropdownPositionReferee({ top: py + height, left: px });
+    });
+  };
+
   useEffect(() => {
-    console.log("Opponent id: ", opponent?.athlete_id);
-    console.log("Challenger id: ", challenger_id);
     const fetchStyles = async () => {
       if (opponent) {
         const response = await axios.get(
@@ -70,18 +95,22 @@ const ChallengeScreen = () => {
   }, [opponent]);
 
   const handleStyleSelect = (style) => {
+    console.log("style: ", style);
     setSelectedStyle(style);
   };
 
   const createBout = async () => {
     if (opponent && referee && selectedStyle) {
       const payload = {
-        challengerId: 1,
+        challengerId: challenger_id,
         acceptorId: opponent.athlete_id,
         refereeId: referee.athlete_id,
+        styleId: selectedStyle.styleId,
         accepted: false,
         completed: false,
       };
+
+      console.log("Payload: ", payload);
 
       const response = await axios.post(
         "http://localhost:8000/api/v1/bout",
@@ -101,102 +130,121 @@ const ChallengeScreen = () => {
 
   return (
     <View style={layout.container}>
-      <Text style={layout.title}>Create Bout</Text>
-      <TextInput
-        style={layout.input}
-        placeholder="Search for an opponent"
-        value={searchOpponent}
-        onChangeText={(text) => setSearchOpponent(text)}
-      />
-      {searchOpponent && (
-      <View style={layout.dropdownContainer}>
-        <ScrollView style={layout.dropdown}>
-          {filteredAthletes(searchOpponent).map((athlete) => (
-            <TouchableOpacity
-              key={athlete.athlete_id}
-              onPress={() => handleOpponentSelect(athlete)}
-            >
-              <Text style={layout.nameInDropDownSearch}>
-                {athlete.firstName} {athlete.lastName} ({athlete.username})
-              </Text>
-            </TouchableOpacity>
-          ))}
-          </ScrollView>
-        </View>
-      )}
-      {opponent && (
-        <Text style={layout.opponent}>
-          Opponent: {opponent.firstName} {opponent.lastName} (
-          {opponent.username})
-        </Text>
-      )}
-      <TextInput
-        style={layout.input}
-        placeholder="Find a Referee"
-        value={searchReferee}
-        onChangeText={(text) => setSearchReferee(text)}
-      />
-      {searchReferee && (
-        <View>
-          {filteredAthletes(searchReferee).map((athlete) => (
-            <TouchableOpacity
-              key={athlete.athlete_id}
-              onPress={() => handleRefereeSelect(athlete)}
-            >
-              <Text>
-                {athlete.firstName} {athlete.lastName} ({athlete.username})
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-      {referee && (
-        <Text style={layout.referee}>
-          Referee: {referee.firstName} {referee.lastName} ({referee.username})
-        </Text>
-      )}
-      <View style={layout.styleButtons}>
-        {styles.map((style) => (
-          <TouchableOpacity
-          key={style.styleId}
-          style={[
-            layout.styleButton,
-            selectedStyle === style ? layout.selectedStyle : null,
-          ]}
-          onPress={() => handleStyleSelect(style)}
-        >
-          <Text
-            style={[
-              layout.styleButtonText,
-              selectedStyle === style ? layout.styleButtonTextSelected : null,
-            ]}
-          >
-            {style.name}
-          </Text>
-        </TouchableOpacity>
-        ))}
-      </View>
-      {selectedStyle && (
-        <TouchableOpacity style={layout.createBoutButton} onPress={createBout}>
-        <Text style={layout.createBoutButtonText}>Create Bout</Text>
-      </TouchableOpacity>
-      
-      )}
-      {pendingBout && (
+      {pendingBout ? (
         <View>
           <Text style={layout.pendingTitle}>Pending Bout</Text>
           <Text>Bout ID: {pendingBout.boutId}</Text>
-          <Text>Challenger ID: {pendingBout.challengerId}</Text>
-          <Text>Acceptor ID: {pendingBout.acceptorId}</Text>
-          <Text>Referee ID: {pendingBout.refereeId}</Text>
-          <Text>Accepted: {pendingBout.accepted.toString()}</Text>
-          <Text>Completed: {pendingBout.completed.toString()}</Text>
-          <Text>Points: {pendingBout.points}</Text>
+          <Text>
+            Challenger: {pendingBout.challengerFirstName}{" "}
+            {pendingBout.challengerLastName} ({pendingBout.challengerScore})
+          </Text>
+          <Text>
+            Acceptor: {pendingBout.acceptorFirstName}{" "}
+            {pendingBout.acceptorLastName} ({pendingBout.acceptorScore})
+          </Text>
+          <Text>
+            Referee: {pendingBout.refereeFirstName}{" "}
+            {pendingBout.refereeLastName}
+          </Text>
+          <Text>Style: {pendingBout.style}</Text>
         </View>
+      ) : (
+        <>
+          <Text style={layout.title}>Create Bout</Text>
+          <View ref={searchOpponentRef} onLayout={() => updateDropdownPosition()}>
+            <TextInput
+              style={layout.input}
+              onChangeText={(text) => setSearchOpponent(text)}
+              value={searchOpponent}
+              placeholder="Search opponent"
+            />
+          </View>
+          {searchOpponent && (
+            <View style={[layout.dropdownContainerOpponent, dropdownPosition]}>
+              {filteredAthletes(searchOpponent).map((athlete) => (
+                <TouchableOpacity
+                  key={athlete.athlete_id}
+                  onPress={() => handleOpponentSelect(athlete)}
+                >
+                  <Text style={layout.nameInDropDownSearch}>
+                    {athlete.firstName} {athlete.lastName} ({athlete.username})
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+          {opponent && (
+            <Text style={layout.opponent}>
+              Opponent: {opponent.firstName} {opponent.lastName} (
+              {opponent.username})
+            </Text>
+          )}
+          <View ref={searchRefereeRef} onLayout={() => updateDropdownPosition()}>
+            <TextInput
+              style={layout.input}
+              onChangeText={(text) => setSearchReferee(text)}
+              value={searchReferee}
+              placeholder="Search referee"
+            />
+          </View>
+          {searchReferee && (
+            <View style={[layout.dropdownContainerReferee, dropdownPositionReferee]}>
+              {filteredAthletes(searchReferee).map((athlete) => (
+                <TouchableOpacity
+                  key={athlete.athlete_id}
+                  onPress={() => handleRefereeSelect(athlete)}
+                >
+                  <Text style={layout.nameInDropDownSearch}>
+                    {athlete.firstName} {athlete.lastName} ({athlete.username})
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+          {referee && (
+            <Text style={layout.referee}>
+              Referee: {referee.firstName} {referee.lastName} (
+              {referee.username})
+            </Text>
+          )}
+          <View>
+            {styles.map((style) => (
+              <TouchableOpacity
+                key={style.styleId}
+                style={[
+                  layout.styleButton,
+                  selectedStyle === style ? layout.selectedStyle : null,
+                ]}
+                onPress={() => handleStyleSelect(style)}
+              >
+                <Text
+                  style={[
+                    layout.styleButtonText,
+                    selectedStyle === style
+                      ? layout.styleButtonTextSelected
+                      : null,
+                  ]}
+                >
+                  {style.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {selectedStyle && (
+            <Text style={layout.selectStyleText}>
+              Selected Style: {selectedStyle.name}
+            </Text>
+          )}
+          <TouchableOpacity
+            style={layout.createBoutButton}
+            onPress={createBout}
+          >
+            <Text style={layout.createBoutButtonText}>Create Bout</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
-
 };
 
 const layout = StyleSheet.create({
@@ -218,13 +266,17 @@ const layout = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     width: screenWidth * 0.7,
+    height: screenHeight * 0.07,
     marginTop: 30,
     marginBottom: 30,
     textAlign: "center",
   },
+  inputText: {
+    fontSize: 18,
+  },
   styleButton: {
     alignSelf: "center",
-    width: "80%",
+    width: screenWidth * 0.7,
     borderWidth: 1,
     borderColor: "#000",
     borderRadius: 5,
@@ -243,7 +295,7 @@ const layout = StyleSheet.create({
     paddingTop: 5,
   },
   styleButtonTextSelected: {
-    color: "#fff",
+    color: "white"
   },
   createBoutButton: {
     backgroundColor: "#fff",
@@ -270,26 +322,44 @@ const layout = StyleSheet.create({
     marginTop: 16,
     textAlign: "center",
   },
-  dropdownContainer: {
+  dropdownContainerOpponent: {
     width: screenWidth * 0.7,
-    maxHeight: screenHeight * 0.3,
-    overflow: "hidden",
+    borderRadius: 5,
+    position: "absolute",
+    backgroundColor: "black",
+    color: "white",
+    zIndex: 1,
+  },
+  dropdownContainerReferee: {
+    width: screenWidth * 0.7,
     borderWidth: 1,
     borderColor: "#000",
     borderRadius: 5,
-    position: 'absolute',
-    backgroundColor: '#fff',
+    position: "absolute",
+    backgroundColor: "#fff",
     zIndex: 1,
   },
   dropdown: {
     maxHeight: screenHeight * 0.3,
+    overflow: "hidden",
+  },
+  dropdownWrapper: {
+    width: "100%",
+    maxHeight: screenHeight * 0.3,
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+    overflow: "hidden",
+  },
+  selectStyleText: {
+    fontSize: 18,
   },
   nameInDropDownSearch: {
     padding: 10,
     fontSize: 16,
     alignSelf: "center",
     fontStyle: "italic",
-  }
+    color: "white",
+  },
 });
 
 export default ChallengeScreen;
