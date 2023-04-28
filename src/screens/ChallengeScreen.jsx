@@ -35,6 +35,7 @@ const ChallengeScreen = () => {
   const challenger_id = useSelector((state) => state.athlete.athleteId);
 
   useEffect(() => {
+    console.log(challenger_id)
     const fetchAthletes = async () => {
       const response = await axios.get("http://localhost:8000/api/v1/athletes");
       setAthletes(response.data);
@@ -208,7 +209,7 @@ const ChallengeScreen = () => {
             </Text>
           )}
           <View>
-            {styles.map((style) => (
+            {styles ? (styles.map((style) => (
               <TouchableOpacity
                 key={style.styleId}
                 style={[
@@ -228,7 +229,9 @@ const ChallengeScreen = () => {
                   {style.name}
                 </Text>
               </TouchableOpacity>
-            ))}
+            )) ): (
+            <Text>No styles in common</Text>
+            )}
           </View>
           {selectedStyle && (
             <Text style={layout.selectStyleText}>
@@ -336,7 +339,7 @@ const layout = StyleSheet.create({
     borderColor: "#000",
     borderRadius: 5,
     position: "absolute",
-    backgroundColor: "#fff",
+    backgroundColor: "black",
     zIndex: 1,
   },
   dropdown: {
