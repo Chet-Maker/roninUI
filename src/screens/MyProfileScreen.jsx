@@ -1,16 +1,25 @@
 // MyProfileScreen.jsx
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { setAthleteId } from '../reducers/athleteSlice';
+import { useDispatch } from 'react-redux';
 
-const MyProfileScreen = () => {
+const MyProfileScreen = (props) => {
   const [profileData, setProfileData] = useState(null);
   const [recordData, setRecordData] = useState(null);
   const [scoreData, setScoreData] = useState(null);
 
+  const dispatch = useDispatch();
+
   const athleteId = useSelector((state) => state.athlete.athleteId);
+
+  const handleLogout = () => {
+    dispatch(setAthleteId(null));
+    props.navigation.navigate('Login');
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -120,6 +129,14 @@ const MyProfileScreen = () => {
           </View>
         </View>
       </View>
+      <View>
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => handleLogout()}
+      >
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 };
@@ -219,6 +236,25 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         fontWeight: 'bold',
         fontSize: 11,
+    },
+    logoutButton: {
+      backgroundColor: "#fff",
+      borderColor: "#000",
+      borderRadius: 5,
+      borderWidth: 2,
+      padding: 10,
+      marginBottom: 50,
+      marginTop: 50,
+      alignSelf: "center",
+      width: "80%",
+      fontSize: 18,
+    },
+    logoutButtonText: {
+      color: "#000",
+      textAlign: "center",
+      fontSize: 18,
+      fontWeight: "bold",
+      paddingTop: 5,
     },
 });
 

@@ -24,6 +24,8 @@ function AppNavigator() {
         {(props) => <StyleSelectorScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} 
+      options={{ headerShown: false, title: 'Home', headerLeft: () => null }}/>
       <Stack.Screen 
       name="Home" 
       component={NavigationBar}

@@ -147,6 +147,7 @@ const ChallengeScreen = () => {
   };
   
   const handleDeclineBout = async (boutId) => {
+    console.log("boutId: ", boutId)
     try {
       const response = await axios.put(`http://localhost:8000/api/v1/bout/${boutId}/decline`);
       if (response.status === 200) {

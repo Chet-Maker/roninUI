@@ -7,6 +7,10 @@ export const athleteSlice = createSlice({
   },
   reducers: {
     setAthleteId: (state, action) => {
+      if (!state || !action.payload) {
+        state.athleteId = null;
+        return;
+      }
       state.athleteId = action.payload.athleteId;
     },
   },
