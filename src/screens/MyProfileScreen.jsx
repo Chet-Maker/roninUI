@@ -11,7 +11,6 @@ const MyProfileScreen = () => {
   const [scoreData, setScoreData] = useState(null);
 
   const athleteId = useSelector((state) => state.athlete.athleteId);
-  console.log(athleteId)
 
   useFocusEffect(
     React.useCallback(() => {

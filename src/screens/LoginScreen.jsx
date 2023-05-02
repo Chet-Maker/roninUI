@@ -19,33 +19,6 @@ const LoginScreen = (props) => {
 
   const dispatch = useDispatch();
 
-//   const handleLogin = async () => {
-//     if (!username || !password) {
-//       Alert.alert('Error', 'Please enter your username and password.');
-//       return;
-//     }
-
-//     try {
-//       const response = await fetch('http://localhost:8000/api/v1/athlete/authorize', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username, password }),
-//       });
-
-//       const data = await response.json();
-
-//       if (data) {
-//         props.navigation.navigate('Home');
-//       } else {
-//         Alert.alert('Error', 'Invalid username or password.');
-//       }
-//     } catch (error) {
-//       console.log('Error logging in:', error);
-//     }
-//   };
-
 const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Error', 'Please enter your username and password.');

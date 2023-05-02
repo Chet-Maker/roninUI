@@ -12,7 +12,8 @@ const Stack = createStackNavigator();
 function AppNavigator() {
   return (
     <Stack.Navigator initialRouteName="LoginScreen">
-      <Stack.Screen name="LoginScreen" >
+      <Stack.Screen name="LoginScreen" 
+      options={{ headerShown: false, title: 'Home', headerLeft: () => null }}>
         {(props) => <LoginScreen {...props} />}
       </Stack.Screen>
       <Stack.Screen name="Registration">
