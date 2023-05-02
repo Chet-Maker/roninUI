@@ -113,8 +113,47 @@ const ChallengeScreen = () => {
       );
       const json = await response.json();
       setPendingBouts(json);
+      console.log(json);
     } catch (error) {
       console.log("Error fetching pending bouts:", error);
+    }
+  };
+
+  const handleCancelBout = async (boutId) => {
+    console.log("boutId: ", boutId);
+    console.log("athlete_id: ", athlete_id);
+    if (boutId) {
+      try {
+        const response = await axios.put(`http://localhost:8000/api/v1/bout/cancel/${boutId}/${athlete_id}`);
+        if (response.status === 200) {
+          fetchPendingBouts();
+        }
+      } catch (error) {
+        console.log("Error canceling bout:", error);
+      }
+    }
+  };
+  
+  const handleAcceptBout = async (boutId) => {
+    console.log("boutId: ", boutId)
+    try {
+      const response = await axios.put(`http://localhost:8000/api/v1/bout/${boutId}/accept`);
+      if (response.status === 200) {
+        fetchPendingBouts();
+      }
+    } catch (error) {
+      console.log("Error accepting bout:", error);
+    }
+  };
+  
+  const handleDeclineBout = async (boutId) => {
+    try {
+      const response = await axios.put(`http://localhost:8000/api/v1/bout/${boutId}/decline`);
+      if (response.status === 200) {
+        fetchPendingBouts();
+      }
+    } catch (error) {
+      console.log("Error declining bout:", error);
     }
   };
 
@@ -287,6 +326,31 @@ const ChallengeScreen = () => {
                   <Text style={layout.pendingBoutItem}> {bout.style}</Text>
                 </View>
                 </View>
+                <View style={layout.buttonContainer}>
+                  {athlete_id === bout.challengerId ? (
+                    <TouchableOpacity
+                      style={layout.cancelButton}
+                      onPress={() => handleCancelBout(bout.boutId)}
+                    >
+                      <Text style={layout.buttonText}>Cancel</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <>
+                      <TouchableOpacity
+                        style={layout.acceptButton}
+                        onPress={() => handleAcceptBout(bout.boutId)}
+                      >
+                        <Text style={layout.acceptButtonText}>Accept</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={layout.declineButton}
+                        onPress={() => handleDeclineBout(bout.boutId)}
+                      >
+                        <Text style={layout.declineButtonText}>Decline</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+              </View>
               </View>
             ))}
           </View>
@@ -353,7 +417,7 @@ const layout = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 2,
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 50,
     marginTop: 50,
     alignSelf: "center",
     width: "80%",
@@ -377,6 +441,7 @@ const layout = StyleSheet.create({
     borderColor: "#000",
     borderRadius: 5,
     marginTop: 20,
+    marginBottom: 20,
     width: screenWidth * 0.8,
     paddingLeft: 30,
     paddingRight: 30,
@@ -441,6 +506,44 @@ const layout = StyleSheet.create({
     alignSelf: "center",
     fontStyle: "italic",
     color: "white",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 15,
+    marginBottom: 10,
+  },
+  acceptButton: {
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 5,
+    padding: 10,
+  },
+  acceptButtonText: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  declineButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  declineButton: {
+    backgroundColor: "black",
+    borderRadius: 5,
+    padding: 10,
+  },
+  cancelButton: {
+    backgroundColor: "gray",
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
 
