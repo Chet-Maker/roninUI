@@ -147,7 +147,6 @@ const ChallengeScreen = () => {
         setSelectedStyle(null);
         setStyles([]);
         fetchPendingBouts();
-        // setPendingBouts(response.data);
       }
     }
   };
@@ -252,8 +251,13 @@ const ChallengeScreen = () => {
           <View>
             <Text style={layout.pendingTitle}>Pending Bouts</Text>
             {pendingBouts.map((bout) => (
-              <View>
-                <Text style={layout.pendingBoutTitle}>Bout</Text>
+                <View style={layout.pendingBout}>
+                 <Text style={layout.pendingBoutTitle}>
+                    vs.{" "}
+                    {athlete_id !== bout.challengerId
+                      ? `${bout.challengerFirstName} ${bout.challengerLastName}`
+                      : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
+                </Text>
                 <View style={layout.pendingBoutRow}>
                   <Text style={layout.pendingBoutLabel}>Challenger:</Text>
                   <Text style={layout.pendingBoutItem}>
@@ -270,6 +274,7 @@ const ChallengeScreen = () => {
                     {bout.acceptorScore})
                   </Text>
                 </View>
+                <View>
                 <View style={layout.pendingBoutRow}>
                   <Text style={layout.pendingBoutLabel}>Referee: </Text>
                   <Text style={layout.pendingBoutItem}>
@@ -280,6 +285,7 @@ const ChallengeScreen = () => {
                 <View style={layout.pendingBoutRow}>
                   <Text style={layout.pendingBoutLabel}>Style:</Text>
                   <Text style={layout.pendingBoutItem}> {bout.style}</Text>
+                </View>
                 </View>
               </View>
             ))}
@@ -365,6 +371,15 @@ const layout = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 30,
     textAlign: "center",
+  },
+  pendingBout: {
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 5,
+    marginTop: 20,
+    width: screenWidth * 0.8,
+    paddingLeft: 30,
+    paddingRight: 30,
   },
   pendingBoutTitle: {
     fontSize: 16,
