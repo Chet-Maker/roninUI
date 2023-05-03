@@ -42,7 +42,7 @@ const handleLogin = async () => {
         Alert.alert('Error', 'Invalid username or password.');
       } else {
         dispatch(setAthleteId(data));
-        props.navigation.navigate('Home');
+        props.navigation.navigate('Home', { initialRoute: 'Challenge' });
       }
     } catch (error) {
       console.log('Error logging in:', error);

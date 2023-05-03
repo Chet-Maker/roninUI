@@ -4,13 +4,23 @@ import ChallengeScreen from '../screens/ChallengeScreen';
 import MyProfileScreen from '../screens/MyProfileScreen';
 import FeedScreen from '../screens/FeedScreen';
 import SearchScreen from '../screens/SearchScreen';
+import {useEffect, useState} from 'react';
 
 const Tab = createBottomTabNavigator();
 
-function NavigationBar() {
+function NavigationBar(props) {
+
+  const [initialRoute, setInitialRoute] = useState('Challenge');
+
+  useEffect(() => {
+    if (props.route.params && props.route.params.initialRoute) {
+      setInitialRoute(props.route.params.initialRoute);
+    }
+  }, [props.route.params]);
+
   return (
     <Tab.Navigator
-      initialRouteName="Challenge"
+      initialRouteName={initialRoute}
       screenOptions={{
         activeTintColor: 'white',
         inactiveTintColor: 'white',

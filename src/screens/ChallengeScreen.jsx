@@ -24,6 +24,7 @@ const ChallengeScreen = () => {
   const [styles, setStyles] = useState([]);
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [pendingBouts, setPendingBouts] = useState(null);
+  const [incompleteBouts, setIncompleteBouts] = useState(null);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [dropdownPositionReferee, setDropdownPositionReferee] = useState({
     top: 0,
@@ -38,6 +39,7 @@ const ChallengeScreen = () => {
   useFocusEffect(
     React.useCallback(() => {
       fetchPendingBouts();
+      fetchIncompleteBouts();
     }, [athlete_id])
   );
 
@@ -60,9 +62,10 @@ const ChallengeScreen = () => {
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
       (athlete) =>
-        athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
-        athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        athlete.lastName.toLowerCase().includes(searchValue.toLowerCase())
+        athlete.athlete_id !== athlete_id &&
+        (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
+          athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+          athlete.lastName.toLowerCase().includes(searchValue.toLowerCase()))
     );
   };
 
@@ -119,12 +122,48 @@ const ChallengeScreen = () => {
     }
   };
 
+  const fetchIncompleteBouts = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/v1/bouts/incomplete/${athlete_id}`
+      );
+      const json = await response.json();
+      setIncompleteBouts(json);
+      console.log(json);
+    } catch (error) {
+      console.log("Error fetching incomplete bouts:", error);
+    }
+  };
+
+  const handleCompleteBout = async (boutId, winnerId, loserId, styleId, isDraw) => {
+    if (boutId && winnerId && loserId) {
+      const payload = {
+        winnerId: winnerId,
+        loserId: loserId,
+        styleId: styleId,
+        isDraw: isDraw,
+      };
+      console.log("payload: ", payload);
+      const response = await axios.post(
+        `http://localhost:8000/api/v1/outcome/bout/${boutId}`,
+        payload
+      );
+      console.log("response: ", response);
+      if (response.status === 200) {
+        fetchPendingBouts();
+        fetchIncompleteBouts();
+      }
+    }
+  };
+
   const handleCancelBout = async (boutId) => {
     console.log("boutId: ", boutId);
     console.log("athlete_id: ", athlete_id);
     if (boutId) {
       try {
-        const response = await axios.put(`http://localhost:8000/api/v1/bout/cancel/${boutId}/${athlete_id}`);
+        const response = await axios.put(
+          `http://localhost:8000/api/v1/bout/cancel/${boutId}/${athlete_id}`
+        );
         if (response.status === 200) {
           fetchPendingBouts();
         }
@@ -133,11 +172,13 @@ const ChallengeScreen = () => {
       }
     }
   };
-  
+
   const handleAcceptBout = async (boutId) => {
-    console.log("boutId: ", boutId)
+    console.log("boutId: ", boutId);
     try {
-      const response = await axios.put(`http://localhost:8000/api/v1/bout/${boutId}/accept`);
+      const response = await axios.put(
+        `http://localhost:8000/api/v1/bout/${boutId}/accept`
+      );
       if (response.status === 200) {
         fetchPendingBouts();
       }
@@ -145,11 +186,13 @@ const ChallengeScreen = () => {
       console.log("Error accepting bout:", error);
     }
   };
-  
+
   const handleDeclineBout = async (boutId) => {
-    console.log("boutId: ", boutId)
+    console.log("boutId: ", boutId);
     try {
-      const response = await axios.put(`http://localhost:8000/api/v1/bout/${boutId}/decline`);
+      const response = await axios.put(
+        `http://localhost:8000/api/v1/bout/${boutId}/decline`
+      );
       if (response.status === 200) {
         fetchPendingBouts();
       }
@@ -160,6 +203,10 @@ const ChallengeScreen = () => {
 
   const createBout = async () => {
     if (opponent && referee && selectedStyle) {
+      if (opponent.athlete_id === referee.athlete_id) {
+        alert("Opponent and referee cannot be the same person");
+        return;
+      }
       const payload = {
         challengerId: athlete_id,
         acceptorId: opponent.athlete_id,
@@ -177,7 +224,7 @@ const ChallengeScreen = () => {
         payload
       );
 
-      console.log("Response Data: ", response.data)
+      console.log("Response Data: ", response.data);
 
       if (response.status === 200) {
         setSearchOpponent("");
@@ -187,6 +234,7 @@ const ChallengeScreen = () => {
         setSelectedStyle(null);
         setStyles([]);
         fetchPendingBouts();
+        fetchIncompleteBouts();
       }
     }
   };
@@ -291,12 +339,12 @@ const ChallengeScreen = () => {
           <View>
             <Text style={layout.pendingTitle}>Pending Bouts</Text>
             {pendingBouts.map((bout) => (
-                <View style={layout.pendingBout}>
-                 <Text style={layout.pendingBoutTitle}>
-                    vs.{" "}
-                    {athlete_id !== bout.challengerId
-                      ? `${bout.challengerFirstName} ${bout.challengerLastName}`
-                      : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
+              <View style={layout.pendingBout} key={bout.boutId}>
+                <Text style={layout.pendingBoutTitle}>
+                  vs.{" "}
+                  {athlete_id !== bout.challengerId
+                    ? `${bout.challengerFirstName} ${bout.challengerLastName}`
+                    : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
                 </Text>
                 <View style={layout.pendingBoutRow}>
                   <Text style={layout.pendingBoutLabel}>Challenger:</Text>
@@ -315,17 +363,17 @@ const ChallengeScreen = () => {
                   </Text>
                 </View>
                 <View>
-                <View style={layout.pendingBoutRow}>
-                  <Text style={layout.pendingBoutLabel}>Referee: </Text>
-                  <Text style={layout.pendingBoutItem}>
-                    {" "}
-                    {bout.refereeFirstName} {bout.refereeLastName}
-                  </Text>
-                </View>
-                <View style={layout.pendingBoutRow}>
-                  <Text style={layout.pendingBoutLabel}>Style:</Text>
-                  <Text style={layout.pendingBoutItem}> {bout.style}</Text>
-                </View>
+                  <View style={layout.pendingBoutRow}>
+                    <Text style={layout.pendingBoutLabel}>Referee: </Text>
+                    <Text style={layout.pendingBoutItem}>
+                      {" "}
+                      {bout.refereeFirstName} {bout.refereeLastName}
+                    </Text>
+                  </View>
+                  <View style={layout.pendingBoutRow}>
+                    <Text style={layout.pendingBoutLabel}>Style:</Text>
+                    <Text style={layout.pendingBoutItem}> {bout.style}</Text>
+                  </View>
                 </View>
                 <View style={layout.buttonContainer}>
                   {athlete_id === bout.challengerId ? (
@@ -351,7 +399,111 @@ const ChallengeScreen = () => {
                       </TouchableOpacity>
                     </>
                   )}
+                </View>
               </View>
+            ))}
+          </View>
+        )}
+        {incompleteBouts && (
+          <View>
+            <Text style={layout.pendingTitle}>Awaiting Referee Decision</Text>
+            {incompleteBouts.map((bout) => (
+              <View style={layout.pendingBout} key={bout.boutId}>
+                <Text style={layout.pendingBoutTitle}>
+                  vs.{" "}
+                  {athlete_id !== bout.challengerId
+                    ? `${bout.challengerFirstName} ${bout.challengerLastName}`
+                    : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
+                </Text>
+                <View style={layout.pendingBoutRow}>
+                  <Text style={layout.pendingBoutLabel}>Challenger:</Text>
+                  <Text style={layout.pendingBoutItem}>
+                    {" "}
+                    {bout.challengerFirstName} {bout.challengerLastName} (
+                    {bout.challengerScore})
+                  </Text>
+                </View>
+                <View style={layout.pendingBoutRow}>
+                  <Text style={layout.pendingBoutLabel}>Acceptor:</Text>
+                  <Text style={layout.pendingBoutItem}>
+                    {" "}
+                    {bout.acceptorFirstName} {bout.acceptorLastName} (
+                    {bout.acceptorScore})
+                  </Text>
+                </View>
+                <View>
+                  <View style={layout.pendingBoutRow}>
+                    <Text style={layout.pendingBoutLabel}>Referee: </Text>
+                    <Text style={layout.pendingBoutItem}>
+                      {" "}
+                      {bout.refereeFirstName} {bout.refereeLastName}
+                    </Text>
+                  </View>
+                  <View style={layout.pendingBoutRow}>
+                    <Text style={layout.pendingBoutLabel}>Style:</Text>
+                    <Text style={layout.pendingBoutItem}> {bout.style}</Text>
+                  </View>
+                </View>
+                <View style={layout.buttonContainer}>
+                  {athlete_id === bout.challengerId ||
+                  athlete_id === bout.acceptorId ? (
+                    <Text style={layout.refereeDecisionText}>
+                      Awaiting Referee Decision
+                    </Text>
+                  ) : (
+                    <View style={layout.decisionContainer}>
+                      <Text style={layout.refereeDecisionText}>Winner:</Text>
+                      <View style={layout.decisionButtons}>
+                        <TouchableOpacity
+                          style={layout.nameButton}
+                          onPress={() =>
+                            handleCompleteBout(
+                              bout.boutId,
+                              bout.challengerId,
+                              bout.acceptorId,
+                              bout.styleId,
+                              false
+                            )
+                          }
+                        >
+                          <Text style={layout.nameButtonText}>
+                            {bout.challengerFirstName} {bout.challengerLastName}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={layout.nameButton}
+                          onPress={() =>
+                            handleCompleteBout(
+                              bout.boutId,
+                              bout.acceptorId,
+                              bout.challengerId,
+                              bout.styleId,
+                              false
+                            )
+                          }
+                        >
+                          <Text style={layout.nameButtonText}>
+                            {bout.acceptorFirstName} {bout.acceptorLastName}
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={layout.drawButton}
+                          onPress={() =>
+                            handleCompleteBout(
+                              bout.boutId,
+                              bout.challengerId,
+                              bout.acceptorId,
+                              bout.styleId,
+                              true
+                            )
+                          }
+                        >
+                          <Text style={layout.drawButtonText}>Draw</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                </View>
               </View>
             ))}
           </View>
@@ -457,18 +609,18 @@ const layout = StyleSheet.create({
   pendingBoutRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: '5%',
+    paddingHorizontal: "5%",
     marginBottom: 10,
   },
   pendingBoutLabel: {
     marginBottom: 10,
-    fontWeight: 'bold',
-    fontSize: 11,
+    fontWeight: "bold",
+    fontSize: 15,
   },
   pendingBoutItem: {
     marginBottom: 10,
-    fontWeight: 'bold',
-    fontSize: 11,
+    fontWeight: "bold",
+    fontSize: 15,
   },
   dropdownContainerOpponent: {
     width: screenWidth * 0.7,
@@ -545,6 +697,60 @@ const layout = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
+  },
+  refereeDecisionText: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: "bold",
+    marginBottom: 10,
+    fontStyle: "italic",
+    fontSize: 20,
+  },
+  decisionContainer: {
+    alignItems: "center",
+    width: "100%",
+  },
+  decisionButtons: {
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "75%",
+  },
+  nameButton: {
+    backgroundColor: "white",
+    borderColor: "black",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginVertical: 5,
+    width: "100%",
+  },
+  nameButtonText: {
+    color: "#000",
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  drawButton: {
+    backgroundColor: "black",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginVertical: 5,
+    marginTop: 30,
+    width: "100%",
+  },
+  drawButtonText: {
+    color: "white",
+    textAlign: "center",
+    paddingBottom: 5,
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingTop: 5,
   },
 });
 
