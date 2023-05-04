@@ -533,7 +533,7 @@ const layout = StyleSheet.create({
     borderColor: "#000",
     padding: 8,
     borderRadius: 5,
-    width: screenWidth * 0.7,
+    width: screenWidth * 0.8,
     height: screenHeight * 0.07,
     marginTop: 30,
     marginBottom: 30,
@@ -574,7 +574,7 @@ const layout = StyleSheet.create({
     marginBottom: 50,
     marginTop: 50,
     alignSelf: "center",
-    width: "80%",
+    width: screenWidth * 0.8,
     fontSize: 18,
   },
   createBoutButtonText: {

@@ -34,6 +34,7 @@ const SearchScreen = () => {
     const response = await axios.get(
       `http://localhost:8000/api/v1/athletes/following/${athleteId}`,
     );
+    console.log("response from fetch following: ", response)
     setFollowing(response.data);
   };
 
@@ -47,26 +48,32 @@ const SearchScreen = () => {
   };
 
   const isFollowing = (athleteId) => {
-    return following.some((athlete) => athlete.athlete_id === athleteId);
+    if (!following) {
+      return false;
+    }
+    return following.some((id) => id === athleteId);
   };
 
   const handleFollow = async (followedId) => {
+    const payload = {
+      followerId: athleteId,
+      followedId: followedId,
+    }
     if (isFollowing(followedId)) {
-      await axios.delete('http://localhost:8000/api/v1/athletes/unfollow', {
-        data: { athleteId, followedId },
-      });
+      console.log("payload: ", payload)
+
+      await axios.delete(`http://localhost:8000/api/v1/athletes/${athleteId}/${followedId}/unfollow`);
     } else {
-      await axios.post('http://localhost:8000/api/v1/athletes/follow', {
-        athleteId,
-        followedId,
-      });
+      await axios.post('http://localhost:8000/api/v1/athletes/follow',
+        payload
+      );
     }
     fetchFollowing();
   };
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
-      <Text>{`${item.firstName} ${item.lastName}`}</Text>
+      <Text>{`${item.firstName} ${item.lastName} (${item.username})`}</Text>
       <TouchableOpacity
         style={[
           styles.followButton,
@@ -105,7 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 10,
-    backgroundColor: 'white',
+    // backgroundColor: "black"
   },
   title: {
     fontSize: 24,
@@ -119,6 +126,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: 'gray',
     borderWidth: 1,
+    borderRadius: 5,
     margin: 10,
     justifyContent: 'center',
     // width: screenWidth * 1,
@@ -128,7 +136,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 30,
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
