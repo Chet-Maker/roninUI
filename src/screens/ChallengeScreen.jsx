@@ -47,6 +47,7 @@ const ChallengeScreen = () => {
     const fetchAthletes = async () => {
       const response = await axios.get("http://localhost:8000/api/v1/athletes");
       setAthletes(response.data);
+      console.log('athletes: ', response.data);
     };
     fetchAthletes();
   }, []);
@@ -242,7 +243,7 @@ const ChallengeScreen = () => {
   return (
     <ScrollView>
       <View style={layout.container}>
-        <Text style={layout.title}>Create Bout</Text>
+        <Text style={layout.title}>Challenge</Text>
         <View ref={searchOpponentRef} onLayout={() => updateDropdownPosition()}>
           <TextInput
             style={layout.input}
