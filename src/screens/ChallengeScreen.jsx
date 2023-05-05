@@ -225,8 +225,6 @@ const ChallengeScreen = () => {
         payload
       );
 
-      console.log("Response Data: ", response.data);
-
       if (response.status === 200) {
         setSearchOpponent("");
         setSearchReferee("");
@@ -536,7 +534,7 @@ const layout = StyleSheet.create({
     width: screenWidth * 0.8,
     height: screenHeight * 0.07,
     marginTop: 30,
-    marginBottom: 30,
+    marginBottom: 1,
     textAlign: "center",
   },
   inputText: {
@@ -624,7 +622,7 @@ const layout = StyleSheet.create({
     fontSize: 15,
   },
   dropdownContainerOpponent: {
-    width: screenWidth * 0.7,
+    width: screenWidth * 0.8,
     borderRadius: 5,
     position: "absolute",
     backgroundColor: "black",
@@ -632,7 +630,7 @@ const layout = StyleSheet.create({
     zIndex: 1,
   },
   dropdownContainerReferee: {
-    width: screenWidth * 0.7,
+    width: screenWidth * 0.8,
     borderWidth: 1,
     borderColor: "#000",
     borderRadius: 5,
