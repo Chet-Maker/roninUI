@@ -16,7 +16,9 @@ const FeedScreen = () => {
   const athleteId = useSelector((state) => state.athlete.athleteId);
 
   const fetchFeedData = async () => {
+    
     const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId}`);
+    console.log("response from fetch feed data: ", response)
     setFeedData(response.data);
   };
 
@@ -30,29 +32,29 @@ const FeedScreen = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    const winner = item.WinnerId === item.ChallengerId ? 'Challenger' : 'Acceptor';
-    const loser = item.LoserId === item.ChallengerId ? 'Challenger' : 'Acceptor';
-    const challengerScoreChange = item.ChallengerScore - item.ChallengerRecord;
-    const acceptorScoreChange = item.AcceptorScore - item.AcceptorRecord;
-
+    const winner = item.winnerId === item.challengerId ? 'Challenger' : 'Acceptor';
+    const loser = item.loserId === item.challengerId ? 'Challenger' : 'Acceptor';
+    const challengerScoreChange = item.winnerScore;
+    const acceptorScoreChange = item.loserScore;
+  
     return (
       <View style={styles.item}>
-        <Text style={styles.title}>{item.Style}</Text>
+        <Text style={styles.title}>{item.style}</Text>
         <View style={styles.row}>
           <View style={styles.column}>
             <Text>Challenger:</Text>
-            <Text>{`${item.ChallengerFirstName} ${item.ChallengerLastName}`}</Text>
-            <Text>{item.ChallengerScore}</Text>
+            <Text>{`${item.challengerFirstName} ${item.challengerLastName}`}</Text>
+            <Text>{item.challengerUsername}</Text>
             <Text style={styles.scoreChange}>
-              {challengerScoreChange >= 0 ? `+${challengerScoreChange}` : challengerScoreChange}
+              {challengerScoreChange}
             </Text>
           </View>
           <View style={styles.column}>
             <Text>Acceptor:</Text>
-            <Text>{`${item.AcceptorFirstName} ${item.AcceptorLastName}`}</Text>
-            <Text>{item.AcceptorScore}</Text>
+            <Text>{`${item.acceptorFirstName} ${item.acceptorLastName}`}</Text>
+            <Text>{item.acceptorUsername}</Text>
             <Text style={styles.scoreChange}>
-              {acceptorScoreChange >= 0 ? `+${acceptorScoreChange}` : acceptorScoreChange}
+              {acceptorScoreChange}
             </Text>
           </View>
         </View>
@@ -67,7 +69,7 @@ const FeedScreen = () => {
       <FlatList
         data={feedData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.BoutId.toString()}
+        keyExtractor={(item) => item.boutId.toString()}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -84,10 +86,9 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 15,
+    padding: 10, // Decrease the padding value
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
-    height: '25%',
   },
   title: {
     fontSize: 18,
