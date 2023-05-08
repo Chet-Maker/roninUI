@@ -5,21 +5,25 @@ import {
   FlatList,
   StyleSheet,
   RefreshControl,
+  TouchableOpacity,
+  TextInput,
 } from 'react-native';
 import { useSelector } from "react-redux";
 import axios from 'axios';
+import { Ionicons } from '@expo/vector-icons';
 
 const FeedScreen = () => {
   const [feedData, setFeedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [commentInputVisible, setCommentInputVisible] = useState(false);
 
   const athleteId = useSelector((state) => state.athlete.athleteId);
 
   const fetchFeedData = async () => {
     
     const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId}`);
-    console.log("response from fetch feed data: ", response)
     setFeedData(response.data);
+    console.log("response from fetch feed data: ", response.data)
   };
 
   const onRefresh = useCallback(() => {
@@ -32,34 +36,49 @@ const FeedScreen = () => {
   }, []);
 
   const renderItem = ({ item }) => {
-    const winner = item.winnerId === item.challengerId ? 'Challenger' : 'Acceptor';
-    const loser = item.loserId === item.challengerId ? 'Challenger' : 'Acceptor';
+    const winner = item.winnerId === item.challengerId ? item.challengerFirstName + " " + item.challengerLastName  : item.acceptorFirstName + " " + item.acceptorLastName;
+    const loser = item.loserId === item.challengerId ? item.challengerFirstName + " " + item.challengerLastName : item.acceptorFirstName + " " + item.acceptorLastName;
     const challengerScoreChange = item.winnerScore;
     const acceptorScoreChange = item.loserScore;
   
     return (
       <View style={styles.item}>
-        <Text style={styles.title}>{item.style}</Text>
+        <Text style={styles.title}>{item.challengerFirstName + " " + item.challengerLastName + " vs. " + item.acceptorFirstName + " " + item.acceptorLastName}</Text>
         <View style={styles.row}>
           <View style={styles.column}>
             <Text>Challenger:</Text>
             <Text>{`${item.challengerFirstName} ${item.challengerLastName}`}</Text>
-            <Text>{item.challengerUsername}</Text>
-            <Text style={styles.scoreChange}>
-              {challengerScoreChange}
-            </Text>
+            {/* <Text style={styles.scoreChange}>
+              {item.winnerScore}
+            </Text> */}
           </View>
           <View style={styles.column}>
             <Text>Acceptor:</Text>
-            <Text>{`${item.acceptorFirstName} ${item.acceptorLastName}`}</Text>
-            <Text>{item.acceptorUsername}</Text>
-            <Text style={styles.scoreChange}>
-              {acceptorScoreChange}
-            </Text>
+            <Text>{`${item.acceptorFirstName} ${item.acceptorLastName}`}{console.log(item.boutId)}</Text>
+            {/* <Text style={styles.scoreChange}>
+              {item.loserScore}
+            </Text> */}
           </View>
         </View>
         <Text>Winner: {winner}</Text>
-        <Text>Loser: {loser}</Text>
+        <Text>Style: {item.style}</Text>
+        <View style={styles.interactionSection}>
+          <TouchableOpacity style={styles.iconContainer}>
+            <Ionicons name="thumbs-up" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.iconContainer}
+            onPress={() => setCommentInputVisible(!commentInputVisible)}
+          >
+            <Ionicons name="chatbubble-outline" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+        {commentInputVisible && (
+          <TextInput
+            style={styles.commentInput}
+            placeholder="Write a comment..."
+          />
+        )}
       </View>
     );
   };
@@ -69,7 +88,7 @@ const FeedScreen = () => {
       <FlatList
         data={feedData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.boutId.toString()}
+        keyExtractor={(item) => item.boutId.toString()} 
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -89,9 +108,13 @@ const styles = StyleSheet.create({
     padding: 10, // Decrease the padding value
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
+    marginTop: 10,
+    backgroundColor: 'rgba(169,169,169,0.1)', // Add grey area
+    borderRadius: 5, // Add rounded corners
   },
   title: {
     fontSize: 18,
+    marginBottom: 20,
     fontWeight: 'bold',
   },
   row: {
@@ -99,14 +122,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     width: '100%',
+    marginBottom: 20,
   },
   column: {
     alignItems: 'center',
   },
-  scoreChange: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: 'green',
+  interactionSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginTop: 10,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  commentInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'lightgray',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginTop: 10,
   },
 });
 
