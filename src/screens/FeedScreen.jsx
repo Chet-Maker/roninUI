@@ -23,7 +23,6 @@ const FeedScreen = () => {
     
     const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId}`);
     setFeedData(response.data);
-    console.log("response from fetch feed data: ", response.data)
   };
 
   const onRefresh = useCallback(() => {
@@ -38,30 +37,30 @@ const FeedScreen = () => {
   const renderItem = ({ item }) => {
     const winner = item.winnerId === item.challengerId ? item.challengerFirstName + " " + item.challengerLastName  : item.acceptorFirstName + " " + item.acceptorLastName;
     const loser = item.loserId === item.challengerId ? item.challengerFirstName + " " + item.challengerLastName : item.acceptorFirstName + " " + item.acceptorLastName;
-    const challengerScoreChange = item.winnerScore;
-    const acceptorScoreChange = item.loserScore;
+    const challengerScoreChange = item.winnerId === item.challengerId ? item.winnerScore : item.loserScore;
+    const acceptorScoreChange = item.winnerId === item.acceptorId ? item.winnerScore : item.loserScore;
   
     return (
       <View style={styles.item}>
         <Text style={styles.title}>{item.challengerFirstName + " " + item.challengerLastName + " vs. " + item.acceptorFirstName + " " + item.acceptorLastName}</Text>
+        <Text style={styles.subTitle}>{item.style}</Text>
+        <Text style={styles.decision}>Winner: {winner}</Text>
         <View style={styles.row}>
           <View style={styles.column}>
             <Text>Challenger:</Text>
             <Text>{`${item.challengerFirstName} ${item.challengerLastName}`}</Text>
-            {/* <Text style={styles.scoreChange}>
-              {item.winnerScore}
-            </Text> */}
+            <Text>
+              Score: {challengerScoreChange}
+            </Text>
           </View>
           <View style={styles.column}>
             <Text>Acceptor:</Text>
             <Text>{`${item.acceptorFirstName} ${item.acceptorLastName}`}{console.log(item.boutId)}</Text>
-            {/* <Text style={styles.scoreChange}>
-              {item.loserScore}
-            </Text> */}
+            <Text>
+              Score: {acceptorScoreChange}
+            </Text>
           </View>
         </View>
-        <Text>Winner: {winner}</Text>
-        <Text>Style: {item.style}</Text>
         <View style={styles.interactionSection}>
           <TouchableOpacity style={styles.iconContainer}>
             <Ionicons name="thumbs-up" size={24} color="black" />
@@ -99,6 +98,7 @@ const FeedScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: 'white',
     flex: 1,
     paddingTop: 10,
   },
@@ -114,8 +114,17 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop: 20,
     fontWeight: 'bold',
+  },
+  subTitle: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  decision: {
+    fontSize: 16,
+    marginBottom: 20,
   },
   row: {
     flexDirection: 'row',
