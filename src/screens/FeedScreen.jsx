@@ -20,7 +20,7 @@ const FeedScreen = () => {
   const athleteId = useSelector((state) => state.athlete.athleteId);
 
   const fetchFeedData = async () => {
-    
+    console.log('athlete id for feed: ', athleteId);
     const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId}`);
     setFeedData(response.data);
   };
@@ -93,6 +93,16 @@ const FeedScreen = () => {
         }
       />
     </View>
+  //   <>
+  //     <ul>
+  //       {this.state.allTexts.map((text, i) => (
+  //         <li key={i}
+  //         <span>Text: {text}</span>
+  //         </li>
+  //     )}
+  //     </ul>
+  //  </>
+    
   );
 };
 
