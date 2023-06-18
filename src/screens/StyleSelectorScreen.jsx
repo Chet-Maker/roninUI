@@ -23,7 +23,6 @@ const StyleSelectorScreen = (props) => {
     try {
       const response = await fetch('http://localhost:8000/api/v1/styles');
       const data = await response.json();
-      console.log('Styles:', data)
       setStyles(data);
     } catch (error) {
       console.log('Error fetching styles:', error);

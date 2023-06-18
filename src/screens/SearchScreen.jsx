@@ -60,7 +60,6 @@ const SearchScreen = () => {
       followedId: followedId,
     }
     if (isFollowing(followedId)) {
-      console.log("payload: ", payload)
 
       await axios.delete(`http://localhost:8000/api/v1/athletes/${athleteId}/${followedId}/unfollow`);
     } else {

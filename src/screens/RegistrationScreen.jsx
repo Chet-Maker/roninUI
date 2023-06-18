@@ -88,7 +88,6 @@ const RegistrationScreen = (props) => {
       password,
       birthDate,
     };
-    console.log('Athlete:', JSON.stringify(athlete));
 
     try {
       const response = await fetch('http://localhost:8000/api/v1/athlete', {

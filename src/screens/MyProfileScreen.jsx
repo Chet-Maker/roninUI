@@ -32,13 +32,12 @@ const MyProfileScreen = (props) => {
           const profileJson = await profileResponse.json();
           const recordJson = await recordResponse.json();
           const scoreJson = await scoreResponse.json();
-            console.log(scoreJson);
           if (scoreJson == null) {
               setScoreData([]);
           } else {
               setScoreData(scoreJson);
           }
-          setProfileData(profileJson[0]);
+          setProfileData(profileJson);
           setRecordData(recordJson);
         } catch (error) {
           console.log('Error fetching data:', error);
@@ -53,7 +52,12 @@ const MyProfileScreen = (props) => {
   );
 
   if (!profileData || !recordData || !scoreData) {
-    return <Text>Loading...</Text>;
+  
+    return (
+      <View style={styles.container}>
+      <Text>Loading...</Text>
+      </View>
+      );
   }
 
   const {
