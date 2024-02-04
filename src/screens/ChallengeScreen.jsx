@@ -63,7 +63,7 @@ const ChallengeScreen = () => {
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
       (athlete) =>
-        athlete.athlete_id !== athlete_id &&
+        athlete.athlete_id.athleteId !== athlete_id &&
         (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.lastName.toLowerCase().includes(searchValue.toLowerCase()))
@@ -96,7 +96,7 @@ const ChallengeScreen = () => {
     const fetchStyles = async () => {
       if (opponent) {
         const response = await axios.get(
-          `http://localhost:8000/api/v1/styles/common/${opponent.athlete_id}/${athlete_id}`
+          `http://localhost:8000/api/v1/styles/common/${opponent.athlete_id}/${athlete_id.athleteId}`
         );
         setStyles(response.data);
       }
@@ -111,11 +111,13 @@ const ChallengeScreen = () => {
   };
 
   const fetchPendingBouts = async () => {
+    console.log('athlete id here:', athlete_id.athleteId)
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/bouts/pending/${athlete_id}`
+        `http://localhost:8000/api/v1/bouts/pending/${athlete_id.athleteId}`
       );
       const json = await response.json();
+      console.log('response from pending:', json);
       setPendingBouts(json);
       console.log(json);
     } catch (error) {
@@ -137,6 +139,11 @@ const ChallengeScreen = () => {
   };
 
   const handleCompleteBout = async (boutId, winnerId, loserId, styleId, isDraw) => {
+    // console.log("boutId: ", boutId);
+    // console.log("winnerId: ", winnerId);
+    // console.log("loserId: ", loserId);
+    // console.log("styleId: ", styleId);
+    // console.log("isDraw: ", isDraw);
     if (boutId && winnerId && loserId) {
       const payload = {
         winnerId: winnerId,

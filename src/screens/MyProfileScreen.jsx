@@ -25,13 +25,23 @@ const MyProfileScreen = (props) => {
     React.useCallback(() => {
       const fetchData = async () => {
         try {
-          const profileResponse = await fetch(`http://localhost:8000/api/v1/athlete/${athleteId}`);
-          const recordResponse = await fetch(`http://localhost:8000/api/v1/athlete/${athleteId}/record`);
-          const scoreResponse = await fetch(`http://localhost:8000/api/v1/score/${athleteId}`);
+          const profileResponse = await fetch(`http://localhost:8000/api/v1/athlete/${athleteId.athleteId}`);
+          if (!profileResponse.ok) {
+            throw new Error(`HTTP error! Status fetching profile: ${profileResponse.status}`);
+          }
+          const recordResponse = await fetch(`http://localhost:8000/api/v1/athlete/${athleteId.athleteId}/record`);
+          if (!recordResponse.ok) {
+            throw new Error(`HTTP error! Status fetching record: ${recordResponse.status}`);
+          }
+          const scoreResponse = await fetch(`http://localhost:8000/api/v1/score/${athleteId.athleteId}`);
+          if (!recordResponse.ok) {
+            throw new Error(`HTTP error! Status fetching record: ${recordResponse.status}`);
+          }
 
           const profileJson = await profileResponse.json();
           const recordJson = await recordResponse.json();
           const scoreJson = await scoreResponse.json();
+          console.log('some data ', profileData, recordJson, scoreJson)
           if (scoreJson == null) {
               setScoreData([]);
           } else {

@@ -99,6 +99,7 @@ const RegistrationScreen = (props) => {
       });
 
       const data = await response.json();
+      console.log('athlete id after registration: ', data)
       dispatch(setAthleteId(data));
       props.navigation.navigate('StyleSelector');
     } catch (error) {

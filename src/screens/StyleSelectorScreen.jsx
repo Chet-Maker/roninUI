@@ -20,6 +20,7 @@ const StyleSelectorScreen = (props) => {
   }, []);
 
   const fetchStyles = async () => {
+    console.log("The athlete id when selecting style:", athleteId);
     try {
       const response = await fetch('http://localhost:8000/api/v1/styles');
       const data = await response.json();
@@ -40,6 +41,8 @@ const StyleSelectorScreen = (props) => {
   };
 
   const handleSubmit = async () => {
+    console.log("final athleteId ", athleteId);
+    console.log("final styles ", selectedStyles)
     try {
       const response = await fetch(`http://localhost:8000/api/v1/styles/athlete/${athleteId}`, {
         method: 'POST',

@@ -36,19 +36,30 @@ const handleLogin = async () => {
           password,
         }),
       });
-  
-      const data = await response.json();
-      if (data === false) {
+
+      if (response.status === 401) {
+        // Handle unauthorized access
         Alert.alert('Error', 'Invalid username or password.');
+        return;
+      } else if (!response.ok) {
+        // Handle other errors based on status code or throw a generic error
+        throw new Error('Something went wrong with the login process.');
+      }
+  
+      const data = await response.json(); // Correctly call the json() method
+      console.log('data, ', data);
+      // Now that data is correctly parsed, check its value
+      if (data === false) {
+        Alert.alert('Error', 'Invalid username or password. Sign Up Below');
       } else {
         dispatch(setAthleteId(data));
         props.navigation.navigate('Home', { initialRoute: 'Challenge' });
       }
     } catch (error) {
       console.log('Error logging in:', error);
+      Alert.alert('Login Error', 'There was a problem logging in. Please try again later.');
     }
   };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Login</Text>

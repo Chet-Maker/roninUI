@@ -11,7 +11,7 @@ export const athleteSlice = createSlice({
         state.athleteId = null;
         return;
       }
-      state.athleteId = action.payload.athleteId;
+      state.athleteId = action.payload;
     },
   },
 });
