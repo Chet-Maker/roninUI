@@ -128,7 +128,7 @@ const ChallengeScreen = () => {
   const fetchIncompleteBouts = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/bouts/incomplete/${athlete_id}`
+        `http://localhost:8000/api/v1/bouts/incomplete/${athlete_id.athleteId}`
       );
       const json = await response.json();
       setIncompleteBouts(json);
@@ -151,7 +151,8 @@ const ChallengeScreen = () => {
         styleId: styleId,
         isDraw: isDraw,
       };
-      console.log("payload: ", payload);
+      console.log("Outcome payload: ", payload);
+      console.log("boutId: ", boutId);
       const response = await axios.post(
         `http://localhost:8000/api/v1/outcome/bout/${boutId}`,
         payload
@@ -216,7 +217,7 @@ const ChallengeScreen = () => {
         return;
       }
       const payload = {
-        challengerId: athlete_id,
+        challengerId: athlete_id.athleteId,
         acceptorId: opponent.athlete_id,
         refereeId: referee.athlete_id,
         styleId: selectedStyle.styleId,
