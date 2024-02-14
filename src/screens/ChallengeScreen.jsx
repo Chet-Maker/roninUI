@@ -47,7 +47,6 @@ const ChallengeScreen = () => {
     const fetchAthletes = async () => {
       const response = await axios.get("http://localhost:8000/api/v1/athletes");
       setAthletes(response.data);
-      console.log('athletes: ', response.data);
     };
     fetchAthletes();
   }, []);
@@ -63,7 +62,7 @@ const ChallengeScreen = () => {
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
       (athlete) =>
-        athlete.athlete_id !== athlete_id.athleteId &&
+        athlete.athlete_id !== athlete_id?.athleteId &&
         (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.lastName.toLowerCase().includes(searchValue.toLowerCase()))
@@ -110,7 +109,7 @@ const ChallengeScreen = () => {
   };
 
   const fetchPendingBouts = async () => {
-    console.log('athlete id here:', athlete_id.athleteId)
+    if (athlete_id.athleteId) {
     try {
       const response = await fetch(
         `http://localhost:8000/api/v1/bouts/pending/${athlete_id.athleteId}`
@@ -120,9 +119,11 @@ const ChallengeScreen = () => {
     } catch (error) {
       console.log("Error fetching pending bouts:", error);
     }
+  }
   };
 
   const fetchIncompleteBouts = async () => {
+    if (athlete_id.athleteId) {
     try {
       const response = await fetch(
         `http://localhost:8000/api/v1/bouts/incomplete/${athlete_id.athleteId}`
@@ -131,6 +132,7 @@ const ChallengeScreen = () => {
       setIncompleteBouts(json);
     } catch (error) {
       console.log("Error fetching incomplete bouts:", error);
+    }
     }
   };
 
@@ -157,12 +159,10 @@ const ChallengeScreen = () => {
   };
 
   const handleCancelBout = async (boutId) => {
-    console.log("boutId: ", boutId);
-    console.log("athlete_id: ", athlete_id);
-    if (boutId) {
+    if (boutId && athlete_id.athleteId) {
       try {
         const response = await axios.put(
-          `http://localhost:8000/api/v1/bout/cancel/${boutId}/${athlete_id}`
+          `http://localhost:8000/api/v1/bout/cancel/${boutId}/${athlete_id.athleteId}`
         );
         if (response.status === 200) {
           fetchPendingBouts();
@@ -174,7 +174,7 @@ const ChallengeScreen = () => {
   };
 
   const handleAcceptBout = async (boutId) => {
-    console.log("boutId: ", boutId);
+    if (boutId) {
     try {
       const response = await axios.put(
         `http://localhost:8000/api/v1/bout/${boutId}/accept`
@@ -185,9 +185,11 @@ const ChallengeScreen = () => {
     } catch (error) {
       console.log("Error accepting bout:", error);
     }
+  }
   };
 
   const handleDeclineBout = async (boutId) => {
+    if (boutId) {
     console.log("boutId: ", boutId);
     try {
       const response = await axios.put(
@@ -199,10 +201,11 @@ const ChallengeScreen = () => {
     } catch (error) {
       console.log("Error declining bout:", error);
     }
+  }
   };
 
   const createBout = async () => {
-    if (opponent && referee && selectedStyle) {
+    if (opponent && referee && selectedStyle && athlete_id.athleteId) {
       if (opponent.athlete_id === referee.athlete_id) {
         alert("Opponent and referee cannot be the same person");
         return;
@@ -340,7 +343,7 @@ const ChallengeScreen = () => {
               <View style={layout.pendingBout} key={bout.boutId}>
                 <Text style={layout.pendingBoutTitle}>
                   vs.{" "}
-                  {athlete_id !== bout.challengerId
+                  {athlete_id?.athleteId !== bout?.challengerId
                     ? `${bout.challengerFirstName} ${bout.challengerLastName}`
                     : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
                 </Text>
@@ -374,7 +377,7 @@ const ChallengeScreen = () => {
                   </View>
                 </View>
                 <View style={layout.buttonContainer}>
-                  {athlete_id === bout.challengerId ? (
+                  {athlete_id?.athleteId === bout?.challengerId ? (
                     <TouchableOpacity
                       style={layout.cancelButton}
                       onPress={() => handleCancelBout(bout.boutId)}
@@ -409,7 +412,7 @@ const ChallengeScreen = () => {
               <View style={layout.pendingBout} key={bout.boutId}>
                 <Text style={layout.pendingBoutTitle}>
                   vs.{" "}
-                  {athlete_id !== bout.challengerId
+                  {athlete_id?.athleteId !== bout?.challengerId
                     ? `${bout.challengerFirstName} ${bout.challengerLastName}`
                     : `${bout.acceptorFirstName} ${bout.acceptorLastName}`}
                 </Text>
@@ -443,8 +446,8 @@ const ChallengeScreen = () => {
                   </View>
                 </View>
                 <View style={layout.buttonContainer}>
-                  {athlete_id === bout.challengerId ||
-                  athlete_id === bout.acceptorId ? (
+                  {athlete_id?.athleteId === bout?.challengerId ||
+                  athlete_id?.athleteId === bout?.acceptorId ? (
                     <Text style={layout.refereeDecisionText}>
                       Awaiting Referee Decision
                     </Text>
