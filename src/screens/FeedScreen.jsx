@@ -21,7 +21,7 @@ const FeedScreen = () => {
 
   const fetchFeedData = async () => {
     console.log('athlete id for feed: ', athleteId);
-    const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId}`);
+    const response = await axios.get(`http://localhost:8000/api/v1/feed/${athleteId.athleteId}`);
     setFeedData(response.data);
   };
 

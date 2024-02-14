@@ -63,7 +63,7 @@ const ChallengeScreen = () => {
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
       (athlete) =>
-        athlete.athlete_id.athleteId !== athlete_id &&
+        athlete.athlete_id !== athlete_id.athleteId &&
         (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.lastName.toLowerCase().includes(searchValue.toLowerCase()))
@@ -106,7 +106,6 @@ const ChallengeScreen = () => {
   }, [opponent]);
 
   const handleStyleSelect = (style) => {
-    console.log("style: ", style);
     setSelectedStyle(style);
   };
 
@@ -117,9 +116,7 @@ const ChallengeScreen = () => {
         `http://localhost:8000/api/v1/bouts/pending/${athlete_id.athleteId}`
       );
       const json = await response.json();
-      console.log('response from pending:', json);
       setPendingBouts(json);
-      console.log(json);
     } catch (error) {
       console.log("Error fetching pending bouts:", error);
     }
@@ -132,18 +129,12 @@ const ChallengeScreen = () => {
       );
       const json = await response.json();
       setIncompleteBouts(json);
-      console.log(json);
     } catch (error) {
       console.log("Error fetching incomplete bouts:", error);
     }
   };
 
   const handleCompleteBout = async (boutId, winnerId, loserId, styleId, isDraw) => {
-    // console.log("boutId: ", boutId);
-    // console.log("winnerId: ", winnerId);
-    // console.log("loserId: ", loserId);
-    // console.log("styleId: ", styleId);
-    // console.log("isDraw: ", isDraw);
     if (boutId && winnerId && loserId) {
       const payload = {
         winnerId: winnerId,

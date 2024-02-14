@@ -32,7 +32,7 @@ const SearchScreen = () => {
 
   const fetchFollowing = async () => {
     const response = await axios.get(
-      `http://localhost:8000/api/v1/athletes/following/${athleteId}`,
+      `http://localhost:8000/api/v1/athletes/following/${athleteId.athleteId}`,
     );
     console.log("response from fetch following: ", response)
     setFollowing(response.data);
@@ -40,7 +40,7 @@ const SearchScreen = () => {
 
   const filteredAthletes = () => {
     return athletes.filter((athlete) =>
-      athlete.athlete_id !== athleteId &&
+      athlete.athlete_id !== athleteId.athleteId &&
       (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
         athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
         athlete.lastName.toLowerCase().includes(searchValue.toLowerCase())),
@@ -56,12 +56,12 @@ const SearchScreen = () => {
 
   const handleFollow = async (followedId) => {
     const payload = {
-      followerId: athleteId,
+      followerId: athleteId.athleteId,
       followedId: followedId,
     }
+    console.log("payload for following: ", payload)
     if (isFollowing(followedId)) {
-
-      await axios.delete(`http://localhost:8000/api/v1/athletes/${athleteId}/${followedId}/unfollow`);
+      await axios.delete(`http://localhost:8000/api/v1/athletes/${athleteId.athleteId}/${followedId}/unfollow`);
     } else {
       await axios.post('http://localhost:8000/api/v1/athletes/follow',
         payload
