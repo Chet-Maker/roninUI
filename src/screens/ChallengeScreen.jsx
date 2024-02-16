@@ -62,7 +62,7 @@ const ChallengeScreen = () => {
   const filteredAthletes = (searchValue) => {
     return athletes.filter(
       (athlete) =>
-        athlete.athlete_id !== athlete_id?.athleteId &&
+        athlete?.athlete_id !== athlete_id?.athleteId &&
         (athlete.username.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
           athlete.lastName.toLowerCase().includes(searchValue.toLowerCase()))
@@ -334,7 +334,7 @@ const ChallengeScreen = () => {
           </Text>
         )}
         <TouchableOpacity style={layout.createBoutButton} onPress={createBout}>
-          <Text style={layout.createBoutButtonText}>Create Bout</Text>
+          <Text style={layout.createBoutButtonText}>Propose Bout</Text>
         </TouchableOpacity>
         {pendingBouts && (
           <View>
